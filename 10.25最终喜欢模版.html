@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水晶标产品价格计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .product-code {
+            font-weight: 600;
+            color: #3498db;
+            background: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .dimension-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .dimension-inputs input {
+            flex: 1;
+        }
+        
+        .add-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .add-btn:hover {
+            background: #219653;
+        }
+        
+        .calculate-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .calculate-btn:hover {
+            background: #d35400;
+        }
+        
+        .result-section {
+            display: none;
+        }
+        
+        .total-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e74c3c;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .result-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .result-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .product-price-list {
+            margin-top: 20px;
+        }
+        
+        .product-price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .product-price-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>水晶标产品价格计算器</h1>
+            <p>精准计算，透明报价</p>
+        </div>
+        
+        <div class="card">
+            <div class="section-title">工艺选择</div>
+            <div class="form-group">
+                <label for="processType">工艺类型</label>
+                <select id="processType">
+                    <option value="normal">普通标（超、高、中粘）</option>
+                    <option value="gold">烫金标</option>
+                    <option value="matte">哑光标</option>
+                    <option value="allinone">全能标</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="section-title">产品信息</div>
+            <div id="products-container">
+                <!-- 产品项目将动态添加在这里 -->
+                <div class="product-item" data-index="0">
+                    <div class="product-header">
+                        <div class="product-code">产品编码: P001</div>
+                        <button class="remove-btn" onclick="removeProduct(0)">删除</button>
+                    </div>
+                    <div class="form-group">
+                        <div class="dimension-inputs">
+                            <div style="flex: 1;">
+                                <label for="length-0">长度 (cm)</label>
+                                <input type="number" id="length-0" step="0.01" min="0.01" placeholder="请输入长度">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="width-0">宽度 (cm)</label>
+                                <input type="number" id="width-0" step="0.01" min="0.01" placeholder="请输入宽度">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity-0">数量</label>
+                        <input type="number" id="quantity-0" min="1" placeholder="请输入数量">
+                    </div>
+                    <div class="form-group">
+                        <label for="spacing-0">裁切间距</label>
+                        <select id="spacing-0">
+                            <option value="1">1cm (默认)</option>
+                            <option value="0.8">0.8cm</option>
+                            <option value="0.6">0.6cm</option>
+                            <option value="0">0cm (裁切框)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="add-btn" onclick="addProduct()">+ 添加产品</button>
+        </div>
+        
+        <button class="calculate-btn" onclick="calculatePrice()">计算价格</button>
+        
+        <div class="card result-section" id="result-section">
+            <div class="section-title">计算结果</div>
+            <div class="total-price" id="total-price">总价: 0.00 元</div>
+            
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="result-label">总面积</div>
+                    <div class="result-value" id="total-area">0.00 ㎡</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">预估重量</div>
+                    <div class="result-value" id="total-weight">0.00 KG</div>
+                </div>
+            </div>
+            
+            <div class="product-price-list">
+                <div class="section-title">产品单价明细</div>
+                <div id="product-price-list">
+                    <!-- 产品单价明细将动态添加在这里 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let productCount = 1;
+        
+        // 添加新产品
+        function addProduct() {
+            const container = document.getElementById('products-container');
+            const newProduct = document.createElement('div');
+            newProduct.className = 'product-item';
+            newProduct.setAttribute('data-index', productCount);
+            
+            newProduct.innerHTML = `
+                <div class="product-header">
+                    <div class="product-code">产品编码: P${(productCount + 1).toString().padStart(3, '0')}</div>
+                    <button class="remove-btn" onclick="removeProduct(${productCount})">删除</button>
+                </div>
+                <div class="form-group">
+                    <div class="dimension-inputs">
+                        <div style="flex: 1;">
+                            <label for="length-${productCount}">长度 (cm)</label>
+                            <input type="number" id="length-${productCount}" step="0.01" min="0.01" placeholder="请输入长度">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="width-${productCount}">宽度 (cm)</label>
+                            <input type="number" id="width-${productCount}" step="0.01" min="0.01" placeholder="请输入宽度">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="quantity-${productCount}">数量</label>
+                    <input type="number" id="quantity-${productCount}" min="1" placeholder="请输入数量">
+                </div>
+                <div class="form-group">
+                    <label for="spacing-${productCount}">裁切间距</label>
+                    <select id="spacing-${productCount}">
+                        <option value="1">1cm (默认)</option>
+                        <option value="0.8">0.8cm</option>
+                        <option value="0.6">0.6cm</option>
+                        <option value="0">0cm (裁切框)</option>
+                    </select>
+                </div>
+            `;
+            
+            container.appendChild(newProduct);
+            productCount++;
+        }
+        
+        // 删除产品
+        function removeProduct(index) {
+            if (productCount <= 1) {
+                alert('至少需要保留一个产品');
+                return;
+            }
+            
+            const product = document.querySelector(`.product-item[data-index="${index}"]`);
+            if (product) {
+                product.remove();
+                // 重新编号剩余产品
+                updateProductCodes();
+            }
+        }
+        
+        // 更新产品编码
+        function updateProductCodes() {
+            const products = document.querySelectorAll('.product-item');
+            productCount = products.length;
+            
+            products.forEach((product, index) => {
+                const codeElement = product.querySelector('.product-code');
+                codeElement.textContent = `产品编码: P${(index + 1).toString().padStart(3, '0')}`;
+                
+                // 更新数据索引
+                product.setAttribute('data-index', index);
+                
+                // 更新删除按钮的onclick事件
+                const removeBtn = product.querySelector('.remove-btn');
+                removeBtn.setAttribute('onclick', `removeProduct(${index})`);
+                
+                // 更新输入框ID
+                const inputs = product.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const oldId = input.id;
+                    const parts = oldId.split('-');
+                    if (parts.length === 2) {
+                        input.id = `${parts[0]}-${index}`;
+                    }
+                });
+            });
+        }
+        
+        // 计算价格
+        function calculatePrice() {
+            // 获取所有产品数据
+            const products = [];
+            const productItems = document.querySelectorAll('.product-item');
+            
+            let hasError = false;
+            
+            productItems.forEach((item, index) => {
+                const length = parseFloat(document.getElementById(`length-${index}`).value);
+                const width = parseFloat(document.getElementById(`width-${index}`).value);
+                const quantity = parseInt(document.getElementById(`quantity-${index}`).value);
+                const spacing = parseFloat(document.getElementById(`spacing-${index}`).value);
+                
+                // 验证输入
+                if (isNaN(length) || length <= 0 || 
+                    isNaN(width) || width <= 0 || 
+                    isNaN(quantity) || quantity <= 0) {
+                    hasError = true;
+                    return;
+                }
+                
+                products.push({
+                    index: index,
+                    length: length,
+                    width: width,
+                    quantity: quantity,
+                    spacing: spacing,
+                    code: `P${(index + 1).toString().padStart(3, '0')}`
+                });
+            });
+            
+            if (hasError || products.length === 0) {
+                alert('请正确填写所有产品的尺寸和数量');
+                return;
+            }
+            
+            // 获取工艺类型
+            const processType = document.getElementById('processType').value;
+            
+            // 计算总面积和总价
+            let totalArea = 0;
+            let totalPrice = 0;
+            const productPrices = [];
+            
+            // 计算每个产品的面积
+            products.forEach(product => {
+                let area = 0;
+                
+                // 根据裁切间距计算面积
+                if (product.spacing === 0) {
+                    // 0cm裁切尺寸
+                    area = (product.length * product.width * product.quantity) / 10000;
+                } else if (product.spacing === 0.6) {
+                    // 0.6cm小尺寸间距
+                    area = ((product.length + 0.6) * (product.width + 0.6) * product.quantity) / 10000;
+                } else if (product.spacing === 0.8) {
+                    // 0.8cm小尺寸间距
+                    area = ((product.length + 0.8) * (product.width + 0.8) * product.quantity) / 10000;
+                } else {
+                    // 默认1cm间距
+                    area = ((product.length + 1) * (product.width + 1) * product.quantity) / 10000;
+                }
+                
+                // 根据工艺类型计算价格
+                let price = 0;
+                
+                if (processType === 'normal') {
+                    // 普通标（超、高、中粘）
+                    if (totalArea + area <= 1) {
+                        price = area * 80;
+                    } else if (totalArea + area <= 2) {
+                        price = area * 75;
+                    } else if (totalArea + area <= 5) {
+                        price = area * 70;
+                    } else if (totalArea + area <= 10) {
+                        price = area * 65;
+                    } else if (totalArea + area <= 20) {
+                        price = area * 60;
+                    } else if (totalArea + area <= 50) {
+                        price = area * 55;
+                    } else {
+                        price = area * 50;
+                    }
+                    
+                    // 起做价10元
+                    if (totalPrice + price < 10) {
+                        price = 10 - totalPrice;
+                    }
+                } else if (processType === 'gold') {
+                    // 烫金标
+                    if (totalArea + area < 0.24948) {
+                        price = 40 - totalPrice;
+                    } else {
+                        price = area * 120;
+                    }
+                } else if (processType === 'matte' || processType === 'allinone') {
+                    // 哑光标/全能标
+                    // 先用普通标价格计算，然后乘以1.5
+                    let normalPrice = 0;
+                    
+                    if (totalArea + area <= 1) {
+                        normalPrice = area * 80;
+                    } else if (totalArea + area <= 2) {
+                        normalPrice = area * 75;
+                    } else if (totalArea + area <= 5) {
+                        normalPrice = area * 70;
+                    } else if (totalArea + area <= 10) {
+                        normalPrice = area * 65;
+                    } else if (totalArea + area <= 20) {
+                        normalPrice = area * 60;
+                    } else if (totalArea + area <= 50) {
+                        normalPrice = area * 55;
+                    } else {
+                        normalPrice = area * 50;
+                    }
+                    
+                    price = normalPrice * 1.5;
+                    
+                    // 起做价30元
+                    if (totalPrice + price < 30) {
+                        price = 30 - totalPrice;
+                    }
+                }
+                
+                totalArea += area;
+                totalPrice += price;
+                
+                // 计算每个产品的单价
+                const unitPrice = price / product.quantity;
+                
+                productPrices.push({
+                    code: product.code,
+                    area: area,
+                    unitPrice: unitPrice,
+                    totalPrice: price
+                });
+            });
+            
+            // 计算预估重量
+            const totalWeight = totalArea * 0.35;
+            
+            // 显示结果
+            document.getElementById('total-area').textContent = totalArea.toFixed(4) + ' ㎡';
+            document.getElementById('total-weight').textContent = totalWeight.toFixed(2) + ' KG';
+            document.getElementById('total-price').textContent = '总价: ' + totalPrice.toFixed(2) + ' 元';
+            
+            // 显示产品单价明细
+            const priceList = document.getElementById('product-price-list');
+            priceList.innerHTML = '';
+            
+            productPrices.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'product-price-item';
+                item.innerHTML = `
+                    <span>${product.code}</span>
+                    <span>${product.unitPrice.toFixed(2)} 元/个</span>
+                `;
+                priceList.appendChild(item);
+            });
+            
+            // 显示结果区域
+            document.getElementById('result-section').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
